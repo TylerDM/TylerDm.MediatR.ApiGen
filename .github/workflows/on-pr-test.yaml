@@ -1,0 +1,34 @@
+name: Automatically test PRs.
+
+on:
+  pull_request:
+    branches:
+      - main
+  workflow_dispatch:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: source/TylerDm.MediatR.ApiGen.Tests
+
+    steps:
+      - name: actions/checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: '0'
+
+      - name: actions/setup-dotnet
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: "8.0.x"
+
+      - name: dotnet restore
+        run: dotnet restore
+
+      - name: dotnet build
+        run: dotnet build --configuration Release --no-restore
+
+      - name: dotnet test
+        run: dotnet test --configuration Release --logger trx --no-build

@@ -1,0 +1,37 @@
+name: Publish on push to main.
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: source/TylerDm.MediatR.ApiGen
+          
+    steps:
+      - name: actions/checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: '0'
+
+      - name: actions/setup-dotnet
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: "8.0.x"
+
+      - name: dotnet restore
+        run: dotnet restore
+
+      - name: dotnet build
+        run: dotnet build -c Release --no-restore
+
+      - name: dotnet pack
+        run: dotnet pack -c Release -o ./nupkg --no-build
+
+      - name: dotnet nuget push
+        run: dotnet nuget push "./nupkg/*.nupkg" --api-key ${{ secrets.NUGET_API_KEY }} -s https://api.nuget.org/v3/index.json
