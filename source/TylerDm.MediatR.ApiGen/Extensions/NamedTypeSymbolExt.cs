@@ -2,6 +2,6 @@
 
 public static class NamedTypeSymbolExt
 {
-	public static AttributeData? GetAttribute(this INamedTypeSymbol symbol, INamedTypeSymbol attributeSymbol) =>
-			symbol.GetAttributes().FirstOrDefault(x => SymbolEqualityComparer.Default.Equals(x.AttributeClass, attributeSymbol));
+	public static AttributeData? GetAttribute(this INamedTypeSymbol symbol, Func<AttributeData, bool> predicate) =>
+			symbol.GetAttributes().FirstOrDefault(predicate);
 }

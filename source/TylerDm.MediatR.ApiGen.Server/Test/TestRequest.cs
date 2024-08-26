@@ -1,4 +1,4 @@
-﻿namespace TylerDm.MediatR.ApiGen.Server.Test;
+﻿namespace TylerDM.MediatR.ApiGen.Test;
 
 public record TestRequest(
 		string Name

@@ -1,9 +1,9 @@
-﻿using TylerDm.MediatR.ApiGen.Server;
-using TylerDm.MediatR.ApiGen.Server.Test;
+﻿using TylerDM.MediatR.ApiGen;
+using TylerDM.MediatR.ApiGen.Test;
 
 namespace TylerDm.MediatR.ApiGen.Tests;
 
-public class IntegrationTests
+public class Tests
 {
 	[Fact]
 	public async Task TestAsync()

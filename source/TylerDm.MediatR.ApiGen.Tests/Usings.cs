@@ -1,9 +1,4 @@
-﻿global using Microsoft.CodeAnalysis;
-global using System.Collections.Immutable;
-global using TylerDM.WebMediatr.SourceGenerator;
-global using TylerDM.WebMediatr.SourceGenerator.Tests;
-global using Xunit;
-global using Microsoft.AspNetCore.Mvc.Testing;
-global using TylerDM.WebMediatr.Test;
+﻿global using Microsoft.AspNetCore.Mvc.Testing;
 global using System.Net.Http.Json;
 global using System.Text.Json;
+global using Xunit;

@@ -1,8 +1,6 @@
-﻿using TylerDM.WebMediatr.SourceGenerator;
+﻿namespace TylerDM.MediatR.ApiGen.Test;
 
-namespace TylerDm.MediatR.ApiGen.Server.Test;
-
-[WebAccessible(Route)]
+[Route(Route)]
 public class TestRequestHandler : IRequestHandler<TestRequest, TestResponse>
 {
 	public const string Route = "/TestingRoute";

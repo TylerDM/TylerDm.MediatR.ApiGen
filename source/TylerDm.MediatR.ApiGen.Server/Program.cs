@@ -1,4 +1,4 @@
-namespace TylerDm.MediatR.ApiGen.Server;
+namespace TylerDM.MediatR.ApiGen;
 
 public partial class Program
 {

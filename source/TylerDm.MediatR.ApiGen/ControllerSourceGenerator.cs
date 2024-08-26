@@ -1,14 +1,19 @@
-﻿namespace TylerDm.MediatR.ApiGen;
+﻿using System.Diagnostics;
+
+namespace TylerDm.MediatR.ApiGen;
 
 [Generator]
 public class ControllerSourceGenerator : ISourceGenerator
 {
-	public void Initialize(GeneratorInitializationContext context) { }
+	public void Initialize(GeneratorInitializationContext context)
+	{
+#if DEBUG
+		Debugger.Launch();
+#endif
+	}
 
 	public void Execute(GeneratorExecutionContext context)
 	{
-		Debugger.Launch();
-
 		foreach (var def in getDefinitions(context.Compilation))
 		{
 			var code = writeCode(def);
@@ -40,41 +45,38 @@ public class ControllerSourceGenerator : ISourceGenerator
 		return writer.ToString();
 	}
 
-	private static IEnumerable<MediatorHandlerControllerDefinition> getDefinitions(Compilation compilation)
+	private static IEnumerable<MediatorHandlerControllerDefinition> getDefinitions(Compilation compilation) =>
+		from handler in compilation.GetClassTypeSymbols()
+		let route = getRoute(handler)
+		where route is not null
+		let interfaceSymbol = getInterfaceSymbol(handler)
+		where interfaceSymbol is not null
+		let typeArguments = interfaceSymbol.TypeArguments
+		let requestSymbol = typeArguments[0]
+		let responseSymbol = typeArguments[1]
+		select new MediatorHandlerControllerDefinition(handler, route, requestSymbol, responseSymbol);
+
+	private static string? getRoute(INamedTypeSymbol handlerTypeSymbol)
 	{
-		var interfaceTypeSymbol = compilation.GetSymbol(x =>
-			x.Name.StartsWith("IRequestHandler") &&
-			x.ContainingNamespace.Name == "MediatR"
+		var attribute = handlerTypeSymbol.GetAttribute(x =>
+		{
+			var attribute = x.AttributeClass;
+			if (attribute is null) return false;
+
+			return
+				attribute.Name == "RouteAttribute" &&
+				attribute.ContainingNamespace.ToDisplayString(SymbolDisplayFormat.FullyQualifiedFormat) == "global::Microsoft.AspNetCore.Mvc";
+		});
+		if (attribute is null) return null;
+
+		if (attribute.ConstructorArguments.Length == 0) return "[controller]";
+		return (string)attribute.ConstructorArguments[0].Value!;
+	}
+
+	private static INamedTypeSymbol? getInterfaceSymbol(INamedTypeSymbol handlerTypeSymbol) =>
+		handlerTypeSymbol.AllInterfaces.FirstOrDefault(x =>
+			x.IsGenericType &&
+			x.ConstructedFrom.Name.StartsWith("IRequestHandler") &&
+			x.ConstructedFrom.ContainingNamespace.Name == "MediatR"
 		);
-		var routeAttributeSymbol = compilation.GetTypeByType<WebAccessibleAttribute>();
-
-		foreach (var handlerTypeSymbol in compilation.GetClassTypeSymbols())
-		{
-			var attribute = handlerTypeSymbol.GetAttribute(routeAttributeSymbol);
-			if (attribute is null) continue;
-			var route = (string)attribute.ConstructorArguments.Single().Value!;
-
-			var interfaceSymbol = getInterfaceSymbol(handlerTypeSymbol, interfaceTypeSymbol);
-			if (interfaceSymbol is null) continue;
-
-			var (requestSymbol, responseSymbol) = getHandlerTypes(handlerTypeSymbol, interfaceTypeSymbol);
-			yield return new(handlerTypeSymbol, route, requestSymbol, responseSymbol);
-		}
-	}
-
-	private static (ITypeSymbol requestType, ITypeSymbol responseType) getHandlerTypes(INamedTypeSymbol symbol, INamedTypeSymbol interfaceTypeSymbol)
-	{
-		foreach (var interfaceSymbol in symbol.AllInterfaces)
-		{
-			if (interfaceSymbol.IsGenericType == false) continue;
-			if (SymbolEqualityComparer.Default.Equals(interfaceSymbol.ConstructedFrom, interfaceTypeSymbol) == false) continue;
-
-			var typeArguments = interfaceSymbol.TypeArguments;
-			return (typeArguments[0], typeArguments[1]);
-		}
-		throw new Exception("Failed to determine request and response types.");
-	}
-
-	private static INamedTypeSymbol? getInterfaceSymbol(INamedTypeSymbol left, ISymbol right) =>
-		left.AllInterfaces.FirstOrDefault(x => x.IsGenericType && SymbolEqualityComparer.Default.Equals(x.ConstructedFrom, right));
 }

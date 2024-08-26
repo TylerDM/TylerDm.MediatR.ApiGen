@@ -1,2 +1,2 @@
 ﻿global using MediatR;
-global using TylerDM.WebMediatr.Test;
+global using Microsoft.AspNetCore.Mvc;
