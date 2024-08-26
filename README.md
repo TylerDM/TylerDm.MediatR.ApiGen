@@ -1,4 +1,4 @@
-# TylerDM.MediatR.Apigen
+# TylerDM.MediatR.ApiGen
 A source generator to automatically create API controllers from your MediatR handlers.
 
 ## Usage
