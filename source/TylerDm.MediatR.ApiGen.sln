@@ -12,6 +12,9 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{A9946F25-0EF4-4268-BB4C-DB16933024E0}"
 	ProjectSection(SolutionItems) = preProject
 		Directory.Build.props = Directory.Build.props
+		..\.github\workflows\on-main-merge-publish.yaml = ..\.github\workflows\on-main-merge-publish.yaml
+		..\.github\workflows\on-pr-test.yaml = ..\.github\workflows\on-pr-test.yaml
+		..\README.md = ..\README.md
 	EndProjectSection
 EndProject
 Global
