@@ -9,6 +9,15 @@
 		<IsRoslynComponent>true</IsRoslynComponent>
 	</PropertyGroup>
 
+	<PropertyGroup Label="Nuget">
+		<IsPackable>true</IsPackable>
+		<Version>1.0.0</Version>
+		<RepositoryType>Git</RepositoryType>
+		<NeutralLanguage>en-US</NeutralLanguage>
+		<GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+		<PackageLicenseExpression>MIT</PackageLicenseExpression>
+	</PropertyGroup>
+
 	<ItemGroup>
 		<PackageReference Include="Microsoft.CodeAnalysis.CSharp" Version="4.11.0" PrivateAssets="all" />
 		<PackageReference Include="Microsoft.CodeAnalysis.Analyzers" Version="3.3.4" PrivateAssets="all" />
